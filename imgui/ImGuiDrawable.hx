@@ -10,8 +10,8 @@ private class ImGuiDrawableBuffers {
 
 	public var vertex_buffers(default, null) : Array<h3d.Buffer> = [];
 	public var index_buffers(default, null) : Array<{
-		texture_id:Int, 
-		vertex_buffer_id:Int, 
+		texture_id:Int,
+		vertex_buffer_id:Int,
 		clip_rect:{x:Int, y:Int, width:Int, height:Int},
 		buffer:h3d.Indexes}> = [];
 
@@ -29,12 +29,12 @@ private class ImGuiDrawableBuffers {
 		// create font texture
 		var texture_size = font_info.width * font_info.height * 4;
 		var font_texture_id = registerTexture(Texture.fromPixels(new hxd.Pixels(
-			font_info.width, 
-			font_info.height, 
+			font_info.width,
+			font_info.height,
 			font_info.buffer.toBytes(texture_size),
 			hxd.PixelFormat.RGBA)));
 		ImGui.setFontTexture(font_texture_id);
-		
+
 		this.initialized = true;
 	}
 
@@ -98,7 +98,7 @@ private class ImGuiDrawableBuffers {
 			// read cmd buffers
 			for (draw_object_index in 0...draw_objects.length) {
 				var draw_object = draw_objects[draw_object_index];
-				
+
 				var ext_index_buffer:hl.Bytes = draw_object.index_buffer;
 				var nb_indices = Std.int(draw_object.index_buffer_size/2);
 				var clip_rect = {
@@ -111,15 +111,15 @@ private class ImGuiDrawableBuffers {
 				// create or reuse index buffer
 				if (index_buffer_index >= this.index_buffers.length) {
 					this.index_buffers[index_buffer_index] = {
-						buffer: new h3d.Indexes(nb_indices), 
-						vertex_buffer_id: vertex_buffer_index, 
+						buffer: new h3d.Indexes(nb_indices),
+						vertex_buffer_id: vertex_buffer_index,
 						clip_rect: clip_rect,
 						texture_id: draw_object.texture_id};
 				} else if (this.index_buffers[index_buffer_index].buffer.count != nb_indices) {
 					this.index_buffers[index_buffer_index].buffer.dispose();
 					this.index_buffers[index_buffer_index] = {
-						buffer: new h3d.Indexes(nb_indices), 
-						vertex_buffer_id: vertex_buffer_index, 
+						buffer: new h3d.Indexes(nb_indices),
+						vertex_buffer_id: vertex_buffer_index,
 						clip_rect: clip_rect,
 						texture_id: draw_object.texture_id
 					};
@@ -162,7 +162,7 @@ private class ImGuiDrawableBuffers {
 class ImGuiDrawable extends h2d.Drawable {
 
 	var empty_tile : h2d.Tile;
-	var mouse_down = [false, false];
+	var mouse_down = [false, false, false];
 	var mouse_x : Float;
 	var mouse_y : Float;
 	var mouse_delta : Float;
@@ -178,7 +178,7 @@ class ImGuiDrawable extends h2d.Drawable {
 		var scene = getScene();
 		ImGui.setDisplaySize(scene.width, scene.height);
 		this.scene_size = {width: scene.width, height:scene.width};
-		
+
 		this.keycode_map = [
 			Key.TAB => ImGuiKey.Tab,
 			Key.LEFT => ImGuiKey.LeftArrow,
@@ -216,12 +216,12 @@ class ImGuiDrawable extends h2d.Drawable {
 	public function dispose() {
 		ImGuiDrawableBuffers.instance.dispose();
 	}
-	
+
 	public function update(dt:Float) {
-		ImGui.setEvents(dt, this.mouse_x, this.mouse_y, this.mouse_delta, mouse_down[0], mouse_down[1]);
+		ImGui.setEvents(dt, this.mouse_x, this.mouse_y, this.mouse_delta, mouse_down[0], mouse_down[1], mouse_down[2]);
 		ImGui.setSpecialKeyState(
-			Key.isDown(Key.LSHIFT) || Key.isDown(Key.RSHIFT), 
-			Key.isDown(Key.LCTRL) || Key.isDown(Key.RCTRL), 
+			Key.isDown(Key.LSHIFT) || Key.isDown(Key.RSHIFT),
+			Key.isDown(Key.LCTRL) || Key.isDown(Key.RCTRL),
 			Key.isDown(Key.LALT) || Key.isDown(Key.RALT),
 			Key.isDown(Key.LEFT_WINDOW_KEY) || Key.isDown(Key.RIGHT_WINDOW_KEY));
 		this.mouse_delta = 0;
@@ -239,14 +239,14 @@ class ImGuiDrawable extends h2d.Drawable {
 				this.mouse_x = event.relX;
 				this.mouse_y = event.relY;
 			case EPush:
-				if (event.button < 2) {
+				if (event.button < 3) {
 					this.mouse_down[event.button] = true;
 					if (ImGui.wantCaptureMouse()) {
 						event.propagate = false;
 					}
 				}
 			case ERelease:
-				if (event.button < 2) {
+				if (event.button < 3) {
 					this.mouse_down[event.button] = false;
 					if (ImGui.wantCaptureMouse()) {
 						event.propagate = false;

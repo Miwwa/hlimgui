@@ -168,13 +168,14 @@ HL_PRIM void HL_NAME(add_key_char)(int c)
 	io.AddInputCharacter(c);
 }
 
-HL_PRIM void HL_NAME(set_events)(float dt, float mouse_x, float mouse_y, float wheel, bool left_click, bool right_click)
+HL_PRIM void HL_NAME(set_events)(float dt, float mouse_x, float mouse_y, float wheel, bool left_click, bool right_click, bool middle_click)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.MousePos = ImVec2(mouse_x,mouse_y);
 	io.MouseWheel = wheel;
 	io.MouseDown[0] = left_click;
 	io.MouseDown[1] = right_click;
+    io.MouseDown[2] = middle_click;
 }
 
 HL_PRIM void HL_NAME(set_display_size)(int display_width, int display_height)
@@ -218,7 +219,7 @@ DEFINE_PRIM(_DYN, initialize, _FUN(_VOID, _DYN));
 DEFINE_PRIM(_VOID, set_font_texture, _I32);
 DEFINE_PRIM(_VOID, set_key_state, _I32 _BOOL);
 DEFINE_PRIM(_VOID, add_key_char, _I32);
-DEFINE_PRIM(_VOID, set_events, _F32 _F32 _F32 _F32 _BOOL _BOOL);
+DEFINE_PRIM(_VOID, set_events, _F32 _F32 _F32 _F32 _BOOL _BOOL _BOOL);
 DEFINE_PRIM(_VOID, set_special_key_state, _BOOL _BOOL _BOOL _BOOL);
 DEFINE_PRIM(_VOID, set_display_size, _I32 _I32);
 
